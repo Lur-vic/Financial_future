@@ -1,0 +1,33 @@
+/* Financial future/frontend/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #0d151d;
+    color: white;
+    padding: 1em;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+#calculator-section {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Простой стиль для проверки JS */
+#result {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
