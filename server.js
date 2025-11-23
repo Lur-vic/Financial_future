@@ -22,7 +22,7 @@ app.get('/api/data', (req, res) => {
     const calculationResult = {
         status: 'OK',
         message: 'Данные успешно получены с бэкенда Express!',
-        value: 12345.67
+        value: 14032
     };
     res.json(calculationResult);
 });
