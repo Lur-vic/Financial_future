@@ -1,33 +1,262 @@
-/* Financial future/frontend/styles.css */
-body {
-    font-family: Arial, sans-serif;
+/* financial-future/public/styles.css - Тёмный, минималистичный дизайн */
+
+/* --- ПАЛИТРА И ОСНОВА --- */
+:root {
+    --bg-dark: #1e1e2f;       /* Фон всего тела (глубокий синий/черный) */
+    --card-dark: #2c2c40;     /* Фон карточек (немного светлее) */
+    --text-light: #f0f0f5;    /* Светлый текст */
+    --accent-green: #4ade80;  /* Акцентный цвет (для успеха/инвестирования) */
+    --accent-blue: #60a5fa;   /* Акцентный цвет (для сбережений/акцента) */
+    --input-bg: #3c3c54;      /* Фон полей ввода (темный) */
+    --border-color: #3c3c54;  /* Цвет границ и разделителей */
+    --toggle-off: #5a5a7a;    /* Цвет выключенного тогла */
+}
+
+/* -------------------- БАЗОВЫЕ СТИЛИ -------------------- */
+
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
-    background-color: #0d151d;
-    color: white;
-    padding: 1em;
-    text-align: center;
+    background-color: var(--bg-dark);
+    padding: 1.5rem 0;
+    padding-left: 40px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    font-weight: 300;
+    font-size: 2.5em;
 }
 
 main {
-    padding: 20px;
+    flex-grow: 1;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-#calculator-section {
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--card-dark);
+    border-top: 1px solid var(--border-color);
+    color: #b0b0c5;
+}
+
+/* -------------------- КОНТЕЙНЕР КАЛЬКУЛЯТОРА -------------------- */
+
+.calculator-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    max-width: 1100px;
+    width: 100%;
+}
+
+#projection-form,
+.results-container {
+    background-color: var(--card-dark);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+h2 {
+    color: var(--accent-green);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-weight: 400;
+    font-size: 1.5em;
+}
+
+/* -------------------- ПОЛЯ И ФОРМА -------------------- */
+
+.input-group label:first-of-type {
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #b0b0c5;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--input-bg);
+    border: none;
+    color: var(--text-light);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus {
+    box-shadow: 0 0 0 2px var(--accent-green);
+    outline: none;
+}
+
+/* -------------------- СТИЛИ TOGGLE SWITCH (ИСПРАВЛЕНО) -------------------- */
+
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 1px dashed var(--border-color);
+    font-size: 0.95em;
+    color: var(--text-light);
+}
+
+.toggle-row label:first-child {
+    flex-grow: 1; /* Чтобы текст занимал место */
+    margin: 0;
+    color: var(--text-light);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Ширина переключателя */
+    height: 24px; /* Высота переключателя */
+    margin-left: 15px; /* Отступ от текста */
+}
+
+/* Скрываем стандартный чекбокс */
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+/* Ползунок (slider) - визуальный фон переключателя */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--toggle-off);
+    transition: 0.4s;
+    border-radius: 24px;
+}
+
+/* Круглый индикатор (knob) */
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px; /* Начальное положение слева */
+    bottom: 3px;
     background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+/* Изменение фона при активации */
+input:checked + .slider {
+    background-color: var(--accent-green);
+}
+
+/* Сдвиг индикатора при активации */
+input:checked + .slider:before {
+    transform: translateX(26px); /* Передвигаем на 26px: 50(ширина) - 18(кнопка) - 6(padding) = 26 */
+}
+
+/* -------------------- КНОПКА -------------------- */
+
+#calculate-btn {
+    background-color: var(--accent-green);
+    color: var(--card-dark);
+    border: none;
+    padding: 15px 25px;
+    font-size: 1.1em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 30px;
+    width: 100%;
+    font-weight: bold;
+}
+
+#calculate-btn:hover {
+    background-color: #6ee69e;
+}
+
+/* -------------------- РЕЗУЛЬТАТЫ И ГРАФИК -------------------- */
+
+.results-container {
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.summary-item {
+    background-color: var(--input-bg); /* Более темный фон для итогов */
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1 1 45%;
+    min-width: 250px;
 }
 
-/* Простой стиль для проверки JS */
-#result {
-    margin-top: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
+.summary-item h3 {
+    color: #b0b0c5;
+    font-size: 1em;
+    margin-bottom: 5px;
+    border-bottom: none;
+}
+
+.result-value {
+    font-size: 2.2em;
+    font-weight: bold;
+}
+
+#investing-result {
+    color: var(--accent-green);
+}
+
+#saving-result {
+    color: var(--accent-blue);
+}
+
+/* Адаптация для десктопа (две колонки) */
+@media (min-width: 900px) {
+    .calculator-container {
+        grid-template-columns: 1fr 1.3fr;
+        gap: 50px;
+    }
 }
