@@ -216,6 +216,11 @@ input:checked + .slider:before {
     flex-direction: column;
 }
 
+#projectionChart {
+    height: 450px !important; /* Принудительная высота, чтобы Chart.js растянулся */
+    width: 100% !important;
+}
+
 .summary {
     display: flex;
     justify-content: space-around;

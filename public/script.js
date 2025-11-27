@@ -109,85 +109,122 @@ document.addEventListener('DOMContentLoaded', () => {
      * Создает или обновляет график.
      */
     function renderChart(data, totalYears) {
-        const ctx = document.getElementById('projectionChart').getContext('2d');
-        
-        // Если график уже существует, уничтожаем его перед созданием нового
-        if (projectionChart) {
-            projectionChart.destroy();
-        }
+    const ctx = document.getElementById('projectionChart').getContext('2d');
+    
+    // Если график уже существует, уничтожаем его перед созданием нового
+    if (projectionChart) {
+        projectionChart.destroy();
+    }
 
-        // Подготовка данных для осей X (годы)
-        const labels = Array.from({ length: totalYears + 1 }, (_, i) => `Year ${i}`);
+    // Подготовка данных для осей X (годы)
+    // Добавляем +1, чтобы включить Год 0 (текущее состояние)
+    const labels = Array.from({ length: totalYears + 1 }, (_, i) => `Year ${i}`);
 
-        projectionChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels, // Годы от 0 до N
-                datasets: [
-                    {
-                        label: 'Investing Scenario',
-                        data: data.investing, // Данные для инвестиционного сценария
-                        borderColor: '#4ade80', // Зеленый (accent-green)
-                        backgroundColor: 'rgba(74, 222, 128, 0.1)',
-                        tension: 0.4,
-                        fill: false,
-                        pointRadius: 3
-                    },
-                    {
-                        label: 'Saving-Only Scenario',
-                        data: data.savingOnly, // Данные для сценария сбережения
-                        borderColor: '#60a5fa', // Синий (accent-blue)
-                        backgroundColor: 'rgba(96, 165, 250, 0.1)',
-                        tension: 0.4,
-                        fill: false,
-                        pointRadius: 3
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: 'white'
-                        }
+    projectionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels, 
+            datasets: [
+                {
+                    label: 'Investing Scenario',
+                    data: data.investing, 
+                    borderColor: '#4ade80', // Акцентный зеленый
+                    backgroundColor: 'rgba(74, 222, 128, 0.1)',
+                    tension: 0.4,
+                    fill: false,
+                    pointRadius: 3
+                },
+                {
+                    label: 'Saving-Only Scenario',
+                    data: data.savingOnly, 
+                    borderColor: '#60a5fa', // Акцентный синий
+                    backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                    tension: 0.4,
+                    fill: false,
+                    pointRadius: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white'
                     }
                 },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Years',
-                            color: 'white'
-                        },
-                        ticks: {
-                            color: 'white'
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Net Worth ($)',
-                            color: 'white'
-                        },
-                        ticks: {
-                            color: 'white',
-                            // Форматирование значений на оси Y
-                            callback: function(value, index, values) {
-                                return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+                tooltip: {
+                    callbacks: {
+                        // Улучшаем отображение сумм в подсказке
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
                             }
-                        },
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)'
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(context.parsed.y);
+                            }
+                            return label;
                         }
                     }
                 }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Years',
+                        color: 'white'
+                    },
+                    ticks: {
+                        color: 'white',
+                        // Отображать подписи каждые 5 лет для чистоты
+                        callback: function(value, index, values) {
+                            if (index % 5 === 0) {
+                                return `Year ${index}`;
+                            }
+                            return null; 
+                        },
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderColor: 'rgba(255, 255, 255, 0.3)' // Более заметная ось X
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Net Worth ($)',
+                        color: 'white'
+                    },
+                    // ГЛАВНОЕ ИЗМЕНЕНИЕ: Принудительно начинаем ось Y с 0
+                    beginAtZero: true, 
+                    ticks: {
+                        color: 'white',
+                        // Увеличиваем лимит подписей и используем компактный формат
+                        maxTicksLimit: 10, 
+                        minRotation: 0,
+                        callback: function(value, index, values) {
+                            return new Intl.NumberFormat('en-US', { 
+                                style: 'currency', 
+                                currency: 'USD', 
+                                notation: 'compact', // Для крупных чисел (1M, 500K)
+                                compactDisplay: 'short',
+                                minimumFractionDigits: 0, 
+                                maximumFractionDigits: 1 
+                            }).format(value);
+                        }
+                    },
+
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.2)', // Более заметная сетка
+                        borderColor: 'rgba(255, 255, 255, 0.3)' // Более заметная ось Y
+                    }
+                }
             }
-        });
-    }
+        }
+    });
+}
 
 });
