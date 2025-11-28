@@ -21,14 +21,50 @@
 }
 
 body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background-color: var(--bg-dark);
-    color: var(--text-light);
+    /* Основной темный цвет фона (запасной вариант) */
+    background-color: #1a1a2e; 
+    
+    /* 1. Если вы используете ФАЙЛ ИЗОБРАЖЕНИЯ: */
+    /*
+    background-image: url('./images/starry-background.jpg'); 
+    background-size: cover;
+    background-attachment: fixed; 
+    background-repeat: no-repeat;
+    */
+
+    /* 2. ИЛИ ИСПОЛЬЗУЕМ CSS-ЭФФЕКТ ДЛЯ ИМИТАЦИИ ЗВЕЗД: */
+    /* Этот градиент создает эффект космического шума и звезд */
+    background-image: 
+        /* Мягкие фиолетово-синие переливы (База) */
+        radial-gradient(ellipse at bottom, #2d3e50 0%, #1a1a2e 100%),
+        /* Мелкие белые точки (Звезды) */
+        radial-gradient(circle, #ffffff 1px, transparent 1px),
+        radial-gradient(circle, #ffffff 1px, transparent 1px);
+
+    background-size: 
+        100% 100%, 
+        500px 500px, /* Плотность звезд 1 */
+        300px 300px; /* Плотность звезд 2 */
+
+    background-position: 
+        0 0, 
+        0 0, 
+        100px 100px; /* Сдвигаем вторые звезды для хаоса */
+    
+    background-attachment: fixed; /* Фиксируем фон при скролле */
+    
+    /* Задаем минимальную высоту на весь экран */
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    
+    /* Убедимся, что шрифт белый, как в дизайне */
+    color: white;
+
+    font-family: 'Arial', sans-serif;
 }
+
+
 
 header {
     background-color: var(--bg-dark);
