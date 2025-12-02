@@ -3,8 +3,19 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+
+
+const { createClient } = require('@supabase/supabase-js'); 
+require('dotenv').config(); // <--- 1. Загрузка переменных из .env
+
+const SUPABASE_URL = process.env.SUPABASE_URL; 
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY; 
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY); // <--- 2. Инициализация клиента
 // Используем переменную окружения PORT для деплоя на Render
 const PORT = process.env.PORT || 3000; 
+
+
 
 // ----------------------------------------------------
 // 1. НАСТРОЙКА MIDDLEWARE
@@ -161,7 +172,7 @@ function calculateProjection(input) {
 // 3. API-РОУТ ДЛЯ РАСЧЕТОВ
 // ----------------------------------------------------
 
-app.post('/api/calculate', (req, res) => {
+app.post('/api/calculate', async (req, res) => {
     try {
         const inputData = req.body;
         
@@ -170,13 +181,47 @@ app.post('/api/calculate', (req, res) => {
              return res.status(400).json({ error: 'Missing required financial inputs.' });
         }
         
+        // 1. Проведение расчетов
         const results = calculateProjection(inputData);
         
-        // Отправка результатов обратно на фронтенд
+        // 2. ЗАПИСЬ В БАЗУ ДАННЫХ (Supabase)
+        // Имя таблицы: Financial_future
+        const { error } = await supabase
+            .from('Financial_future') 
+            .insert([
+                {
+                    // Входные данные (соответствуют полям формы)
+                    user_name: inputData.name, // Имя пользователя (Your name (for database))
+                    current_age: inputData.currentAge,
+                    active_monthly: inputData.activeMonthly,
+                    additional_yearly: inputData.additionalYearly,
+                    income_increase_toggle: inputData.incomeIncreasement, // Toggle
+                    current_assets: inputData.currentAssets,
+                    regular_monthly: inputData.regularMonthly,
+                    additional_yearly_spending: inputData.additionalYearlySpending,
+                    children_number: inputData.childrenNumber,
+                    private_school_toggle: inputData.privateSchool, // Toggle
+                    traveling_toggle: inputData.moreTraveling, // Toggle
+                    health_problems_toggle: inputData.healthProblems, // Toggle
+                    parents_help_toggle: inputData.parentsHelp, // Toggle
+                    projection_years: inputData.projectionYears,
+                    annual_return_rate: inputData.annualReturn, 
+                    // Результаты расчетов
+                    result_investing_amount: results.finalInvestingAmount,
+                    result_saving_amount: results.finalSavingOnlyAmount
+                }
+            ]);
+
+        if (error) {
+            // Выводим ошибку в консоль сервера, но не блокируем пользователя
+            console.error('Supabase write error:', error); 
+        }
+        
+        // 3. Отправка результатов обратно на фронтенд
         res.json(results);
         
     } catch (error) {
-        console.error('Calculation error:', error);
+        console.error('Calculation error or internal server error:', error);
         res.status(500).json({ error: 'Internal server error during financial calculation.' });
     }
 });
