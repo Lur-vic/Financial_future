@@ -9,6 +9,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const savingResultDiv = document.getElementById('saving-result');
     const serverMessage = document.getElementById('server-message');
 
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    const loginModal = document.getElementById('loginModal');
+    const loginButton = document.getElementById('loginButton');
+    const closeModal = document.getElementById('closeModal');
+
+
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+        });
+    }
+
+    // 2. ЛОГИКА ОТКРЫТИЯ МОДАЛЬНОГО ОКНА
+    if (loginButton && loginModal && closeModal) {
+        loginButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (mainNav) {
+                mainNav.classList.remove('active'); // Закрыть бургер-меню
+            }
+            loginModal.style.display = 'block'; // Показать модальное окно
+        });
+
+        // Закрыть модальное окно при клике на X
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+
+        // Закрыть модальное окно при клике вне его
+        window.addEventListener('click', (event) => {
+            if (event.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+        });
+    }
+    
+
     // Обработчик события отправки формы
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); // Предотвращаем стандартную перезагрузку страницы
