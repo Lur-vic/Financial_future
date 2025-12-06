@@ -3,7 +3,9 @@
 const express = require('express');
 const path = require('path');
 const app = express();
-
+const session = require('express-session');
+const passport = require('passport');
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
 const { createClient } = require('@supabase/supabase-js'); 
 require('dotenv').config(); // <--- 1. Загрузка переменных из .env
@@ -26,6 +28,40 @@ app.use(express.json());
 
 // Обслуживание статических файлов из папки 'public'
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'super-secret-fallback-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // на проде будет true (https)
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Сериализация пользователя
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
+
+// === Google Strategy ===
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "/auth/google/callback"
+}, (accessToken, refreshToken, profile, done) => {
+  // Здесь можно сохранить пользователя в Supabase, если хочешь
+  return done(null, {
+    id: profile.id,
+    email: profile.emails[0].value,
+    name: profile.displayName,
+    photo: profile.photos[0]?.value
+  });
+}));
 
 
 /**
@@ -172,6 +208,8 @@ function calculateProjection(input) {
 // 3. API-РОУТ ДЛЯ РАСЧЕТОВ
 // ----------------------------------------------------
 
+
+
 app.post('/api/calculate', async (req, res) => {
     try {
         const inputData = req.body;
@@ -225,6 +263,44 @@ app.post('/api/calculate', async (req, res) => {
         res.status(500).json({ error: 'Internal server error during financial calculation.' });
     }
 });
+
+
+
+// 1. Начинаем Google Login
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// 2. Google перенаправляет сюда после входа
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/' }),
+  (req, res) => {
+    res.redirect('/');
+  }
+);
+
+// 3. Выход
+app.get('/auth/logout', (req, res) => {
+  req.logout(() => {
+    res.redirect('/');
+  });
+});
+
+// 4. API: получить текущего пользователя (для фронтенда)
+app.get('/auth/me', (req, res) => {
+  if (req.user) {
+    res.json({
+      authenticated: true,
+      user: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        photo: req.user.photo
+      }
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
 
 
 // ----------------------------------------------------

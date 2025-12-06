@@ -2,7 +2,7 @@
 
 let projectionChart = null; // Глобальная переменная для экземпляра графика
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('projection-form');
     const resultsSection = document.getElementById('results');
     const investingResultDiv = document.getElementById('investing-result');
@@ -15,6 +15,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('loginButton');
     const closeModal = document.getElementById('closeModal');
 
+    let currentUser = null;
+
+
+
+    async function updateAuthUI() {
+        const response = await fetch('/auth/me');
+        const data = await response.json();
+
+        if (data.authenticated) {
+            currentUser = data.user;
+            document.getElementById('loginButton').textContent = 'Log Out';
+            document.getElementById('dashboardLink').style.display = 'block';
+        } else {
+            currentUser = null;
+            document.getElementById('loginButton').textContent = 'Log In / Sign Up';
+            document.getElementById('dashboardLink').style.display = 'none';
+        }
+        }
+
 
     if (menuToggle && mainNav) {
         menuToggle.addEventListener('click', () => {
@@ -24,28 +43,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. ЛОГИКА ОТКРЫТИЯ МОДАЛЬНОГО ОКНА
     if (loginButton && loginModal && closeModal) {
-        loginButton.addEventListener('click', (e) => {
+                loginButton.addEventListener('click', (e) => {
             e.preventDefault();
-            if (mainNav) {
-                mainNav.classList.remove('active'); // Закрыть бургер-меню
+            if (currentUser) {
+                // Уже залогинен → логаут
+                window.location.href = '/auth/logout';
+            } else {
+                // Не залогинен → показываем модалку
+                if (mainNav) mainNav.classList.remove('active');
+                loginModal.style.display = 'block';
             }
-            loginModal.style.display = 'block'; // Показать модальное окно
         });
 
         // Закрыть модальное окно при клике на X
-        closeModal.addEventListener('click', () => {
+            closeModal.addEventListener('click', () => {
             loginModal.style.display = 'none';
+            updateAuthUI();                    // ← добавлена строка
         });
 
-        // Закрыть модальное окно при клике вне его
         window.addEventListener('click', (event) => {
             if (event.target === loginModal) {
                 loginModal.style.display = 'none';
+                updateAuthUI();                // ← добавлена строка
             }
         });
     }
     
 
+
+    
     // Обработчик события отправки формы
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); // Предотвращаем стандартную перезагрузку страницы
@@ -73,6 +99,10 @@ document.addEventListener('DOMContentLoaded', () => {
             healthProblems: document.getElementById('healthProblems').checked,
             parentsHelp: document.getElementById('parentsHelp').checked,
         };
+
+        if (currentUser) {
+            inputData.user_id = currentUser.id;
+        }
         
         // Базовая проверка (можно расширить)
         const numericalFields = [
@@ -263,5 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 }
+
+await updateAuthUI();
 
 });
