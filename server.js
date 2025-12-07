@@ -52,9 +52,12 @@ passport.deserializeUser((obj, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${process.env.NODE_ENV === 'production' ? 'https' : 'http'}://finance.kelerbit.com/auth/google/callback`
-}, (accessToken, refreshToken, profile, done) => {
-  // Здесь можно сохранить пользователя в Supabase, если хочешь
+  callbackURL: "/auth/google/callback",           // ← просто путь
+  passReqToCallback: true                         // ← ВАЖНО! включаем req в коллбек
+},
+(req, accessToken, refreshToken, profile, done) => {
+  // Этот код выполняется только при возврате от Google
+  // Здесь мы можем использовать req.protocol и req.headers.host
   return done(null, {
     id: profile.id,
     email: profile.emails[0].value,
