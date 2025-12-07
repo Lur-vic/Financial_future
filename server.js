@@ -52,17 +52,16 @@ passport.deserializeUser((obj, done) => {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/callback",           // ← просто путь
-  passReqToCallback: true                         // ← ВАЖНО! включаем req в коллбек
+  callbackURL: "/auth/google/callback",        // ← просто путь
+  passReqToCallback: true                      // ← это ключ к успеху
 },
 (req, accessToken, refreshToken, profile, done) => {
-  // Этот код выполняется только при возврате от Google
-  // Здесь мы можем использовать req.protocol и req.headers.host
+  // req здесь содержит текущий протокол (http/https) и хост (localhost или прод)
   return done(null, {
     id: profile.id,
     email: profile.emails[0].value,
     name: profile.displayName,
-    photo: profile.photos[0]?.value
+    photo: profile.photos?.[0]?.value || null
   });
 }));
 
@@ -270,7 +269,14 @@ app.post('/api/calculate', async (req, res) => {
 
 
 // 1. Начинаем Google Login
-app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+app.get('/auth/google', (req, res, next) => {
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account',
+    // Магия: принудительно передаёт текущий хост в Google
+    callbackURL: `${req.protocol}://${req.headers.host}/auth/google/callback`
+  })(req, res, next);
+});
 
 // 2. Google перенаправляет сюда после входа
 app.get('/auth/google/callback',
