@@ -49,14 +49,21 @@ passport.deserializeUser((obj, done) => {
 });
 
 // === Google Strategy ===
+const getCallbackURL = (req) => {
+  // Если в заголовках есть X-Forwarded-Proto (это ставит Render, Cloudflare и т.д.)
+  const proto = req.headers['x-forwarded-proto'] || req.protocol;
+  const host = req.headers['x-forwarded-host'] || req.headers.host || req.hostname;
+  return `${proto === 'https' ? 'https' : 'http'}://${host}/auth/google/callback`;
+};
+
+// Google Strategy с динамическим callbackURL
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/callback",        // ← просто путь
-  passReqToCallback: true                      // ← это ключ к успеху
-},
-(req, accessToken, refreshToken, profile, done) => {
-  // req здесь содержит текущий протокол (http/https) и хост (localhost или прод)
+  callbackURL: '/auth/google/callback',  // паспорт сам подставит правильный
+  passReqToCallback: true,
+  proxy: true  // ← ЭТО КЛЮЧ ДЛЯ Render, Vercel, Fly.io и т.д. !!!
+}, (req, accessToken, refreshToken, profile, done) => {
   return done(null, {
     id: profile.id,
     email: profile.emails[0].value,
@@ -273,8 +280,7 @@ app.get('/auth/google', (req, res, next) => {
   passport.authenticate('google', {
     scope: ['profile', 'email'],
     prompt: 'select_account',
-    // Магия: принудительно передаёт текущий хост в Google
-    callbackURL: `${req.protocol}://${req.headers.host}/auth/google/callback`
+    callbackURL: getCallbackURL(req)  // ← здесь магия
   })(req, res, next);
 });
 
