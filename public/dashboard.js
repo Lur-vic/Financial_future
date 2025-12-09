@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             return `
                 <tr>
                     <td>${date}</td>
-                    <td>${escapeHtml(p.user_name || 'Anonymous')}</td>
-                    <td>${p.current_age}</td>
                     <td>$${Number(p.active_monthly).toLocaleString()}</td>
+                    <td>$${Number(p.regular_monthly).toLocaleString()}</td>
+                    <td>$${Number(p.additional_yearly_spending).toLocaleString()}</td>
                     <td>$${Number(p.current_assets).toLocaleString()}</td>
                     <td>${p.projection_years} yrs</td>
                     <td style="color: var(--accent-green); font-weight: bold;">

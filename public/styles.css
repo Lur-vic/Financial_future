@@ -501,3 +501,52 @@ input:checked + .slider:before {
     }
     .projections-table td:last-child { padding-bottom: 20px; }
 }
+
+
+
+/* --------------------- КРАСИВАЯ КНОПКА "BACK TO CALCULATOR" --------------------- */
+.back-to-calculator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 1.05em;
+    font-weight: 500;
+    padding: 8px 14px;
+    background: rgba(74, 222, 128, 0.15);
+    border: 1px solid var(--accent-green);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.back-to-calculator:hover {
+    background: rgba(74, 222, 128, 0.3);
+    color: white;
+    transform: translateX(-3px);
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.3);
+}
+
+.back-to-calculator svg {
+    transition: transform 0.3s ease;
+}
+
+.back-to-calculator:hover svg {
+    transform: translateX(-4px);
+}
+
+
+/* --------------------- DASHBOARD — ЦЕНТРИРОВАНИЕ И КРАСИВАЯ ШИРИНА --------------------- */
+.dashboard-container {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Убираем старый грид с главной страницы */
+.dashboard-container .projections-table {
+    display: table;
+    width: 100%;
+}
