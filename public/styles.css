@@ -432,3 +432,72 @@ input:checked + .slider:before {
 .google-button:hover {
     background-color: #357ae8;
 }
+
+
+
+
+
+/* --------------------- DASHBOARD TABLE --------------------- */
+.projections-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-dark);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.projections-table th {
+    background: rgba(74, 222, 128, 0.2);
+    color: var(--accent-green);
+    padding: 16px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.projections-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+.projections-table tr:hover {
+    background: rgba(74, 222, 128, 0.08);
+}
+
+.view-btn {
+    background: var(--accent-green);
+    color: black;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+.view-btn:hover {
+    background: #6ee69e;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 900px) {
+    .projections-table, .projections-table thead, .projections-table tbody, 
+    .projections-table th, .projections-table td, .projections-table tr {
+        display: block;
+    }
+    .projections-table thead tr { display: none; }
+    .projections-table tr { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; }
+    .projections-table td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+    .projections-table td::before {
+        content: attr(data-label) ": ";
+        position: absolute;
+        left: 16px;
+        font-weight: bold;
+        color: var(--accent-green);
+    }
+    .projections-table td:last-child { padding-bottom: 20px; }
+}

@@ -255,8 +255,10 @@ app.post('/api/calculate', async (req, res) => {
                     annual_return_rate: inputData.annualReturn, 
                     // Результаты расчетов
                     result_investing_amount: results.finalInvestingAmount,
-                    result_saving_amount: results.finalSavingOnlyAmount
+                    result_saving_amount: results.finalSavingOnlyAmount,
+                    ...(req.user?.id ? { user_id: req.user.id } : {})
                 }
+                
             ]);
 
         if (error) {
@@ -313,6 +315,29 @@ app.get('/auth/me', (req, res) => {
     });
   } else {
     res.json({ authenticated: false });
+  }
+});
+
+
+// Защищённый роут: все расчёты текущего пользователя
+app.get('/api/user-projections', async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('Financial_future')
+      .select('*')
+      .eq('user_id', req.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    console.error('Error fetching projections:', err);
+    res.status(500).json({ error: 'Failed to load projections' });
   }
 });
 

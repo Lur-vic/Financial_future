@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Financial Future</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="app-title">Financial Future</h1>
+        <div class="menu-toggle" id="menuToggle">Menu</div>
+        
+        <div class="auth-section">
+            <a href="/" class="login-link">← Back to Calculator</a>
+        </div>
+
+        <nav class="main-nav" id="mainNav">
+            <ul>
+                <li><a href="/">Calculator</a></li>
+                <li><a href="/auth/logout">Log out</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="calculator-container" style="max-width: 1400px;">
+            <h2 style="grid-column: 1 / -1; text-align: center; margin-bottom: 30px;">
+                Your Financial Projections
+            </h2>
+
+            <div id="authMessage" style="text-align: center; color: #ff6b6b; font-size: 1.2em; margin: 40px;"></div>
+
+            <div id="projectionsTableContainer">
+                <table id="projectionsTable" class="projections-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Monthly Income</th>
+                            <th>Assets</th>
+                            <th>Years</th>
+                            <th>Investing Result</th>
+                            <th>Saving Result</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectionsBody">
+                        <!-- Заполняется JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <p style="text-align: center; color: #888; margin-top: 40px;">
+                No projections yet. Go to <a href="/" style="color: var(--accent-green);">calculator</a> and create one!
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© Financial Future — Your future, calculated.</p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
