@@ -60,9 +60,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <td data-label="Saving" style="color: var(--accent-blue);">
                         ${'$' + Number(p.result_saving_amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </td>
-                    <td data-label="Actions">
-                        <button class="view-btn" data-id="${p.id}">View</button>
-                    </td>
                 </tr>
             `;
         }).join('');
