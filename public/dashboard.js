@@ -48,19 +48,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             return `
                 <tr>
-                    <td>${date}</td>
-                    <td>$${Number(p.active_monthly).toLocaleString()}</td>
-                    <td>$${Number(p.regular_monthly).toLocaleString()}</td>
-                    <td>$${Number(p.additional_yearly_spending).toLocaleString()}</td>
-                    <td>$${Number(p.current_assets).toLocaleString()}</td>
-                    <td>${p.projection_years} yrs</td>
-                    <td style="color: var(--accent-green); font-weight: bold;">
-                        $${Number(p.result_investing_amount).toLocaleString()}
+                    <td data-label="Date">${date}</td>
+                    <td data-label="Income">${'$' + Number(p.active_monthly).toLocaleString()}</td>
+                    <td data-label="Regular Spendings">${'$' + Number(p.regular_monthly).toLocaleString()}</td>
+                    <td data-label="Extra/yr">${'$' + Number(p.additional_yearly_spending).toLocaleString()}</td>
+                    <td data-label="Assets">${'$' + Number(p.current_assets).toLocaleString()}</td>
+                    <td data-label="Years">${p.projection_years} yrs</td>
+                    <td data-label="Investing" style="color: var(--accent-green); font-weight: bold;">
+                        ${'$' + Number(p.result_investing_amount).toLocaleString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </td>
-                    <td style="color: var(--accent-blue);">
-                        $${Number(p.result_saving_amount).toLocaleString()}
+                    <td data-label="Saving" style="color: var(--accent-blue);">
+                        ${'$' + Number(p.result_saving_amount).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </td>
-                    <td>
+                    <td data-label="Actions">
                         <button class="view-btn" data-id="${p.id}">View</button>
                     </td>
                 </tr>

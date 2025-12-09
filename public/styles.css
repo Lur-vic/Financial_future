@@ -550,3 +550,116 @@ input:checked + .slider:before {
     display: table;
     width: 100%;
 }
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* важно! */
+}
+
+main {
+    flex: 1 0 auto; /* растягиваем main на всё доступное место */
+}
+
+footer {
+    flex-shrink: 0; /* футер не сжимается */
+    margin-top: auto; /* прижимает его вниз */
+}
+
+
+
+/* ==================== МОБИЛЬНАЯ ВЕРСИЯ — ИСПРАВЛЯЕМ ШАПКУ И ТАБЛИЦУ ==================== */
+
+/* 1. Шапка на мобильных — убираем наложение */
+@media (max-width: 768px) {
+    .app-header {
+        flex-wrap: wrap;
+        padding: 16px 20px;
+        gap: 12px;
+    }
+
+    .app-title {
+        font-size: 1.6em;
+        order: 1;
+    }
+
+    .menu-toggle {
+        order: 2;
+        font-size: 1.8em;
+    }
+
+    .auth-section {
+        order: 3;
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .back-to-calculator {
+        width: fit-content;
+        padding: 10px 18px;
+        font-size: 1em;
+    }
+}
+
+/* 2. Мобильная таблица — карточки вместо таблицы */
+@media (max-width: 900px) {
+    .projections-table thead {
+        display: none; /* скрываем заголовки */
+    }
+
+    .projections-table,
+    .projections-table tbody,
+    .projections-table tr,
+    .projections-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .projections-table tr {
+        background: var(--card-dark);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin-bottom: 20px;
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .projections-table td {
+        text-align: right !important;
+        padding: 10px 0;
+        border: none;
+        position: relative;
+        padding-left: 50% !important;
+        font-size: 1.05em;
+    }
+
+    .projections-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        font-weight: 600;
+        color: var(--accent-green);
+        text-align: left;
+    }
+
+    /* Кнопка View в карточке — по центру */
+    .projections-table td:last-child {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .view-btn {
+        width: 100%;
+        max-width: 200px;
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+}
