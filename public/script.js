@@ -91,6 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentAssets: parseFloat(document.getElementById('currentAssets').value),
             projectionYears: parseInt(document.getElementById('projectionYears').value),
             annualReturn: parseFloat(document.getElementById('annualReturn').value),
+            salaryIncreasement: parseFloat(document.getElementById('salaryIncreasement').value),
+            inflationRate: parseFloat(document.getElementById('inflationRate').value),
 
             // Состояние Toggles (отправляем как true/false)
             incomeIncreasement: document.getElementById('incomeIncreasement').checked,
@@ -108,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const numericalFields = [
             'currentAge', 'activeMonthly', 'additionalYearly', 'regularMonthly', 
             'additionalYearlySpending', 'childrenNumber', 'currentAssets', 
-            'projectionYears', 'annualReturn'
+            'projectionYears', 'annualReturn', 'salaryIncreasement', 'inflationRate'
         ];
 
         if (inputData.name.trim() === '') {

@@ -84,7 +84,7 @@ function calculateProjection(input) {
         currentAge, activeMonthly, additionalYearly, regularMonthly, additionalYearlySpending,
         childrenNumber, currentAssets, projectionYears, annualReturn,
         // Toggles не трогаем, они булевы
-        incomeIncreasement, privateSchool, moreTraveling, healthProblems, parentsHelp
+        incomeIncreasement, privateSchool, moreTraveling, healthProblems, parentsHelp, salaryIncreasement, inflationRate
     } = input;
 
     // ****************************************************
@@ -99,6 +99,8 @@ function calculateProjection(input) {
     currentAssets = Number(currentAssets);
     projectionYears = Number(projectionYears);
     annualReturn = Number(annualReturn);
+    salaryIncreasement = Number(salaryIncreasement);
+    inflationRate = Number(inflationRate);
     
     // Также можно добавить дополнительную проверку на NaN на бэкенде:
     if (isNaN(currentAge) || isNaN(activeMonthly) || isNaN(projectionYears)) {
@@ -131,6 +133,11 @@ function calculateProjection(input) {
     // ----------------------------------------------------
     
     for (let i = 0; i < projectionYears; i++) {
+
+        if (i >= 1) {   
+          activeMonthly *= (1 + salaryIncreasement / 100);   
+          regularMonthly *= (1 + inflationRate / 100);
+        }
         
         // 1. Расчет ГОДОВОГО АКТИВНОГО ДОХОДА
         let yearlyActiveIncome = activeMonthly * 12;
@@ -147,7 +154,7 @@ function calculateProjection(input) {
         let totalYearlySpendings = (regularMonthly * 12) + additionalYearlySpending;
         
         // Расходы на детей
-        if (childrenNumber > 0) {
+        if (childrenNumber > 0 && i < 20) {  // ← вот и вся магия!
             const childExpenseMonthly = privateSchool 
                 ? EXPENSE_PRIVATE_SCHOOL_PER_CHILD_MONTHLY 
                 : EXPENSE_PUBLIC_SCHOOL_PER_CHILD_MONTHLY;
@@ -256,6 +263,8 @@ app.post('/api/calculate', async (req, res) => {
                     // Результаты расчетов
                     result_investing_amount: results.finalInvestingAmount,
                     result_saving_amount: results.finalSavingOnlyAmount,
+                    salary_increasement_rate: inputData.salaryIncreasement,
+                    inflation_rate: inputData.inflationRate,
                     ...(req.user?.id ? { user_id: req.user.id } : {})
                 }
                 
