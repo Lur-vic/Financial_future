@@ -1,13 +1,41 @@
-name: Deploy to EC2
+name: Test and Deploy
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress tests against localhost
+        run: npx cypress run
+
+      - name: Run Cypress tests against production (money.kelerbit.com)
+        env:
+          CYPRESS_BASE_URL: https://money.kelerbit.com
+        run: npx cypress run
+
+      - name: Run Cypress tests against production (finance.kelerbit.com)
+        env:
+          CYPRESS_BASE_URL: https://finance.kelerbit.com
+        run: npx cypress run
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test  # ← деплой только если тесты прошли
     steps:
       - name: Deploy to EC2
         env:
