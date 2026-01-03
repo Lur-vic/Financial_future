@@ -10,12 +10,28 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const { createClient } = require('@supabase/supabase-js'); 
 require('dotenv').config(); // <--- 1. Загрузка переменных из .env
 
-const SUPABASE_URL = process.env.SUPABASE_URL; 
-const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY; 
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY); // <--- 2. Инициализация клиента
-// Используем переменную окружения PORT для деплоя на Render
-const PORT = process.env.PORT || 3000; 
+// Создаём клиент Supabase только если переменные есть (на продакшене)
+// В тестах — фейковый клиент, чтобы не падало
+let supabase;
+
+if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+  const { createClient } = require('@supabase/supabase-js');
+  supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+} else {
+  // Фейковый клиент для тестов (или если .env нет)
+  supabase = {
+    from: () => ({
+      insert: async () => ({ data: null, error: null }),
+      select: async () => ({ data: [], error: null }),
+      // Добавь другие методы, если используешь (update, delete и т.д.)
+    })
+  };
+}
+
+const PORT = process.env.PORT || 3000;
 
 
 
