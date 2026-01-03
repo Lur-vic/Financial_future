@@ -356,9 +356,15 @@ app.get('/api/user-projections', async (req, res) => {
 // 4. ЗАПУСК СЕРВЕРА
 // ----------------------------------------------------
 
-const host = process.env.HOST || '0.0.0.0';
-const port = process.env.PORT || 3000;
 
-app.listen(port, host, () => {
-  console.log(`Server running at http://${host === '0.0.0.0' ? '0.0.0.0 (all interfaces)' : host}:${port}`);
-});
+module.exports = { calculateProjection };
+
+
+if (require.main === module) {
+  const host = process.env.HOST || '0.0.0.0';
+  const port = process.env.PORT || 3000;
+
+  app.listen(port, host, () => {
+    console.log(`Server running at http://${host === '0.0.0.0' ? '0.0.0.0 (all interfaces)' : host}:${port}`);
+  });
+}
