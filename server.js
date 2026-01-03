@@ -73,20 +73,23 @@ const getCallbackURL = (req) => {
 };
 
 // Google Strategy с динамическим callbackURL
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback',  // паспорт сам подставит правильный
-  passReqToCallback: true,
-  proxy: true  // ← ЭТО КЛЮЧ ДЛЯ Render, Vercel, Fly.io и т.д. !!!
-}, (req, accessToken, refreshToken, profile, done) => {
-  return done(null, {
-    id: profile.id,
-    email: profile.emails[0].value,
-    name: profile.displayName,
-    photo: profile.photos?.[0]?.value || null
-  });
-}));
+// Настройка Passport Google — только если мы не в тестах
+if (!process.env.JEST_WORKER_ID) {
+  passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: '/auth/google/callback',
+    passReqToCallback: true,
+    proxy: true
+  }, (req, accessToken, refreshToken, profile, done) => {
+    return done(null, {
+      id: profile.id,
+      email: profile.emails[0].value,
+      name: profile.displayName,
+      photo: profile.photos?.[0]?.value || null
+    });
+  }));
+}
 
 
 /**
