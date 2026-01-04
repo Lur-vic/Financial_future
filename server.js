@@ -376,7 +376,7 @@ app.get('/api/user-projections', async (req, res) => {
 // ----------------------------------------------------
 
 
-module.exports = { calculateProjection };
+module.exports = { calculateProjection, app }; // Экспортируем для тестов
 
 
 if (require.main === module) {
