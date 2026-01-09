@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>BMI Calculator</title>
+  <style>
+    body { background: #1e1e2f; color: white; font-family: Arial; text-align: center; padding: 50px; }
+    h1 { color: #4ade80; }
+    form { max-width: 400px; margin: 0 auto; }
+    input { width: 100%; padding: 15px; margin: 10px 0; background: #3c3c54; border: none; border-radius: 8px; color: white; font-size: 1.2em; }
+    button { background: #4ade80; color: black; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.2em; cursor: pointer; }
+    button:hover { background: #6ee69e; }
+  </style>
+</head>
+<body>
+  <h1>BMI Calculator</h1>
+  <p>Индекс массы тела</p>
+  <form action="/calculate" method="POST">
+    <input type="number" name="height" placeholder="Рост (см)" step="0.1" required>
+    <input type="number" name="weight" placeholder="Вес (кг)" step="0.1" required>
+    <button type="submit">Рассчитать</button>
+  </form>
+</body>
+</html>
