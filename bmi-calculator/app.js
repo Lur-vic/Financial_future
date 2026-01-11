@@ -4,16 +4,16 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
+app.get('/bmi', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-app.post('/calculate', (req, res) => {
+app.post('/bmi/calculate', (req, res) => {
   const heightCm = parseFloat(req.body.height);
   const weight = parseFloat(req.body.weight);
 
   if (!heightCm || !weight || heightCm <= 0 || weight <= 0) {
-    return res.send('<h1>Ошибка: введите корректные данные</h1><a href="/">Назад</a>');
+    return res.send('<h1>Ошибка: введите корректные данные</h1><a href="/bmi">Назад</a>');
   }
 
   const heightM = heightCm / 100;
@@ -47,7 +47,7 @@ app.post('/calculate', (req, res) => {
       <h1>${bmiRounded}</h1>
       <div class="category">${category}</div>
       <p>Рост: ${heightCm} см | Вес: ${weight} кг</p>
-      <a href="/">Рассчитать заново</a>
+      <a href="/bmi">Рассчитать заново</a>
     </body>
     </html>
   `);
