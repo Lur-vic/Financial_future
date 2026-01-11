@@ -4,10 +4,12 @@ const app = express();
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/bmi', (req, res) => {
+// Главная страница по /bmi (или /bmi/)
+app.get(['/bmi', '/bmi/'], (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+// Обработка формы по /bmi/calculate
 app.post('/bmi/calculate', (req, res) => {
   const heightCm = parseFloat(req.body.height);
   const weight = parseFloat(req.body.weight);
