@@ -225,17 +225,30 @@ function calculateProjection(input) {
         investingData.push(Math.max(0, currentInvestmentWorth));
         savingOnlyData.push(Math.max(0, currentSavingWorth));
     }
-    
-    // 4. ФИНАЛЬНЫЙ ВОЗВРАТ РЕЗУЛЬТАТОВ
-    return {
+
+          const results = {
         projectionYears: input.projectionYears,
         finalInvestingAmount: Math.round(currentInvestmentWorth),
         finalSavingOnlyAmount: Math.round(currentSavingWorth),
         projectionData: {
-            investing: investingData,
-            savingOnly: savingOnlyData,
+          investing: investingData,
+          savingOnly: savingOnlyData,
         }
-    };
+      };
+
+      // Теперь добавляем новые поля с инфляцией США (3.2%)
+      const inflationUsaRate = 3.2 / 100;
+      const years = input.projectionYears;
+
+      const finalInvestingReal = currentInvestmentWorth / Math.pow(1 + inflationUsaRate, years);
+      const finalSavingReal = currentSavingWorth / Math.pow(1 + inflationUsaRate, years);
+
+      results.finalInvestingAmountInflationAdjusted = Math.round(finalInvestingReal);
+      results.finalSavingOnlyAmountInflationAdjusted = Math.round(finalSavingReal);
+      results.inflationUsaPercent = 3.2;
+
+      // Возвращаем объект
+      return results;
 }
 
 

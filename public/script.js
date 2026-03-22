@@ -159,20 +159,38 @@ document.addEventListener('DOMContentLoaded', async () => {
      * @param {Object} data - Результаты расчета от сервера.
      */
     function displayResults(data) {
-        // Форматирование чисел для отображения
-        const formatCurrency = (value) => {
-            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
-        };
-        
-        // 4. Заполнение итоговых сумм
-        investingResultDiv.textContent = formatCurrency(data.finalInvestingAmount);
-        savingResultDiv.textContent = formatCurrency(data.finalSavingOnlyAmount);
-        
-        resultsSection.style.display = 'block';
-
-        // 5. Построение графика (Chart.js)
-        renderChart(data.projectionData, data.projectionYears);
+    // Форматирование чисел для отображения
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('en-US', { 
+            style: 'currency', 
+            currency: 'USD', 
+            minimumFractionDigits: 0, 
+            maximumFractionDigits: 0 
+        }).format(value);
+    };
+    
+    // Основные результаты
+    investingResultDiv.textContent = formatCurrency(data.finalInvestingAmount);
+    savingResultDiv.textContent = formatCurrency(data.finalSavingOnlyAmount);
+    
+    // Новые результаты с инфляцией США (если пришли с сервера)
+    if (data.finalInvestingAmountInflationAdjusted !== undefined) {
+        document.getElementById('investing-adjusted').style.display = 'block';
+        document.getElementById('investing-adjusted-value').textContent = 
+            formatCurrency(data.finalInvestingAmountInflationAdjusted);
     }
+
+    if (data.finalSavingOnlyAmountInflationAdjusted !== undefined) {
+        document.getElementById('saving-adjusted').style.display = 'block';
+        document.getElementById('saving-adjusted-value').textContent = 
+            formatCurrency(data.finalSavingOnlyAmountInflationAdjusted);
+    }
+    
+    resultsSection.style.display = 'block';
+
+    // Построение графика (без изменений)
+    renderChart(data.projectionData, data.projectionYears);
+}
 
     /**
      * Создает или обновляет график.

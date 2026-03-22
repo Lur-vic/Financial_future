@@ -662,4 +662,18 @@ footer {
         padding: 10px 20px;
         font-size: 1em;
     }
+    .adjusted-value {
+    font-size: 0.95em;
+    color: pink !important;        /* серый, как везде на сайте */
+    opacity: 0.75;              /* полупрозрачность */
+    margin-top: 8px;
+    font-style: italic;
+}
+
+    .adjusted-value span {
+        color: #4ade80;
+        font-weight: bold;
+    }
+
+ 
 }
